@@ -3,8 +3,6 @@ var canvas;
 var gl;
 var shaderProgram;
 
-var rotationCubeX = 0;
-var rotationCubeY = 0;
 
 // Buffers
 var worldVertexPositionBuffer = null;
@@ -211,14 +209,14 @@ function initTextures() {
   wallTexture.image.onload = function () {
     handleTextureLoaded(wallTexture)
   }
-  wallTexture.image.src = "./assets/grass1.jpg";
+  wallTexture.image.src = "./assets/grass2.jpg";
 
   cubeTexture = gl.createTexture();
   cubeTexture.image = new Image();
   cubeTexture.image.onload = function() {
     handleTextureLoaded(cubeTexture);
   };  // async loading
-  cubeTexture.image.src = "./assets/crate.gif";
+  cubeTexture.image.src = "./assets/gifft.jpg";
 }
 
 function handleTextureLoaded(texture) {
@@ -287,7 +285,7 @@ function initBuffers() {
     -1.0, -1.0, -1.0,
     -1.0, -1.0,  1.0,
     -1.0,  1.0,  1.0,
-    -1.0,  1.0, -1.0
+    -1.0,  1.0, -1.0,
   ];
 
   // Now pass the list of vertices into WebGL to build the shape. We
@@ -446,37 +444,51 @@ function drawScene() {
   // the center of the scene.
   mat4.identity(mvMatrix);
 
-  mvPushMatrix();
+  //mvPushMatrix();
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
   //mat4.identity(mvMatrix);
 
-  mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-  mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-  //mat4.scale(mvMatrix, [0.1, 0.1, 0.1]);
-  mat4.translate(mvMatrix, [-xPosition, (-yPosition + 1), -zPosition]);
+  //for (var i = 2; i < 8.0; i+=1.2) {
+    mvPushMatrix();
+    //for (var j = -8.0; j < 8.0; j+=1.0) {
+    
+      //console.log(i);
+      
+      mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+      mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+      mat4.translate(mvMatrix, [-xPosition, -yPosition+0.07, -zPosition-2]);
+      mat4.scale(mvMatrix, [0.07, 0.07, 0.07]);
+    
+    
+      // Draw the cube by binding the array buffer to the cube's vertices
+      // array, setting attributes, and pushing it to GL.
+      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+      gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    
+      // Set the texture coordinates attribute for the vertices.
+      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
+      gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    
+      // Specify the texture to map onto the faces.
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
+      gl.uniform1i(shaderProgram.samplerUniform, 0);
+    
+      // Draw the cube.
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+      setMatrixUniforms();
+      gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+      
+      
+    //}
+    
+    mvPopMatrix();
+    
+  //}
+  
 
-
-  // Draw the cube by binding the array buffer to the cube's vertices
-  // array, setting attributes, and pushing it to GL.
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-  // Set the texture coordinates attribute for the vertices.
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
-  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-  // Specify the texture to map onto the faces.
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
-  gl.uniform1i(shaderProgram.samplerUniform, 0);
-
-  // Draw the cube.
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-  setMatrixUniforms();
-  gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-
-  mvPopMatrix();
+  //mvPopMatrix();
   // Now move the drawing position a bit to where we want to start
   // drawing the world.
   mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
@@ -588,9 +600,25 @@ function handleKeys() {
 // Figuratively, that is. There's nothing moving in this demo.
 //
 function start() {
+  
+  //********************************************************************
+  //var mesh = new OBJ.Mesh("./assets/cube.txt");
+  
+  // use the included helper function to initialize the VBOs
+  // if you don't want to use this function, have a look at its
+  // source to see how to use the Mesh instance.
+  
+  // have a look at the initMeshBuffers docs for an exmample of how to
+  // render the model at this point
+
+//**************************************************************************
+  
+  
+  
   canvas = document.getElementById("glcanvas");
 
   gl = initGL(canvas);      // Initialize the GL context
+  //OBJ.initMeshBuffers(gl, mesh);
 
   // Only continue if WebGL is available and working
   if (gl) {
