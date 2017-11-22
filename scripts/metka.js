@@ -23,6 +23,39 @@ var wallTexture;
 // Variables for storing textures
 var cubeTexture;
 
+//Gift positions
+var gift_size = 0.07;
+var removed_gifts = 0;
+var gift_positions = new Array();
+gift_positions[0] = new Array();
+gift_positions[1] = new Array();
+gift_positions[2] = new Array();
+gift_positions[3] = new Array();
+gift_positions[4] = new Array();
+
+var x1 = 0;
+var z1 = -2;
+var x2 = 2;
+var z2 = -5;
+var x3 = 1.2;
+var z3 = -4;
+var x4 = 3;
+var z4 = 4;
+var x5 = -4;
+var z5 = -3;
+
+// gift_positions[0][0] = -xPosition;
+// gift_positions[0][1] = -yPosition+gift_size;
+// gift_positions[0][2] = -zPosition+2;
+
+// gift_positions[1][0] = -xPosition-2;
+// gift_positions[1][1] = -yPosition+gift_size;
+// gift_positions[1][2] = -zPosition+5;
+
+// gift_positions[2][0] = -xPosition-1.2;
+// gift_positions[2][1] = -yPosition+gift_size;
+// gift_positions[2][2] = -zPosition+4;
+
 
 // Variable that stores  loading state of textures.
 var texturesLoaded = false;
@@ -449,45 +482,90 @@ function drawScene() {
   // the center of the scene.
   //mat4.identity(mvMatrix);
 
-  //for (var i = 2; i < 8.0; i+=1.2) {
-    mvPushMatrix();
-    //for (var j = -8.0; j < 8.0; j+=1.0) {
-    
-      //console.log(i);
+
+  //console.log(gift_positions.length);
+  
+  if (removed_gifts == gift_positions.length) {reset_gift_positions(); removed_gifts = 0;}
+
+  //if (gift_positions[0][0] == null) {
+    for (var i = 0; i < gift_positions.length; i+=1) {
+      //for (var j = -8.0; j < 8.0; j+=1.0) {
       
-      mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-      mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-      mat4.translate(mvMatrix, [-xPosition, -yPosition+0.07, -zPosition-2]);
-      mat4.scale(mvMatrix, [0.07, 0.07, 0.07]);
-    
-    
-      // Draw the cube by binding the array buffer to the cube's vertices
-      // array, setting attributes, and pushing it to GL.
-      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-      gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    
-      // Set the texture coordinates attribute for the vertices.
-      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
-      gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    
-      // Specify the texture to map onto the faces.
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
-      gl.uniform1i(shaderProgram.samplerUniform, 0);
-    
-      // Draw the cube.
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-      setMatrixUniforms();
-      gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+        //console.log(i);
+        //console.log("lolll");
       
+        if (gift_positions[i][0] != 999) {
+          mvPushMatrix();
+          
+          //var xT = (- Math.round(Math.random())) * Math.floor(Math.random() * 6) + 1;
+          //var zT = Math.floor(Math.random() * 6) + 2;
+          
+          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+          
+          if (i == 0) {
+            gift_positions[i][0] = -xPosition+x1;
+            gift_positions[i][1] = -yPosition+gift_size;
+            gift_positions[i][2] = -zPosition+z1;
+            
+          } else if (i == 1) {
+            gift_positions[i][0] = -xPosition+x2;
+            gift_positions[i][1] = -yPosition+gift_size;
+            gift_positions[i][2] = -zPosition+z2;
+            
+          } else if (i == 2) {
+            gift_positions[i][0] = -xPosition-x3;
+            gift_positions[i][1] = -yPosition+gift_size;
+            gift_positions[i][2] = -zPosition+z2;
+            
+          } else if (i == 3) {
+            gift_positions[i][0] = -xPosition-x4;
+            gift_positions[i][1] = -yPosition+gift_size;
+            gift_positions[i][2] = -zPosition+z4;
+            
+          } else if (i == 4) {
+            gift_positions[i][0] = -xPosition-x5;
+            gift_positions[i][1] = -yPosition+gift_size;
+            gift_positions[i][2] = -zPosition+z5;
+            
+          }
+            
+          
+          mat4.translate(mvMatrix, [gift_positions[i][0], gift_positions[i][1], gift_positions[i][2]]);
+          
+          mat4.scale(mvMatrix, [gift_size, gift_size, gift_size]);
+        
+        
+          // Draw the cube by binding the array buffer to the cube's vertices
+          // array, setting attributes, and pushing it to GL.
+          gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+          gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        
+          // Set the texture coordinates attribute for the vertices.
+          gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
+          gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        
+          // Specify the texture to map onto the faces.
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
+          gl.uniform1i(shaderProgram.samplerUniform, 0);
+        
+          // Draw the cube.
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+          setMatrixUniforms();
+          gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+          
+          mvPopMatrix();
+          
+        } else {continue;}
+          
+      //}
       
-    //}
-    
-    mvPopMatrix();
+    }
     
   //}
-  
-
+    
+    
   //mvPopMatrix();
   // Now move the drawing position a bit to where we want to start
   // drawing the world.
@@ -520,16 +598,29 @@ function drawScene() {
 // Called every time before redeawing the screen.
 //
 function animate() {
+  //var num_of_crosses = 0;
   var timeNow = new Date().getTime();
   if (lastTime != 0) {
     var elapsed = timeNow - lastTime;
 
     if (speed != 0) {
       xPosition -= Math.sin(degToRad(yaw)) * speed * elapsed;
+      //var xx = check_touched_gifts(0, xPosition);
+      //if (xx >= 0) {num_of_crosses++;}
+      
       zPosition -= Math.cos(degToRad(yaw)) * speed * elapsed;
+      //var zz = check_touched_gifts(2, zPosition);
+      //if (zz >= 0) {num_of_crosses++;}
 
       joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
-      yPosition = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+      yPosition = Math.sin(degToRad(joggingAngle)) / 20 + 0.4;
+      //var yy = check_touched_gifts(1, yPosition);
+      //if (yy >= 0) {num_of_crosses++;}
+      
+      var ctg = check_touched_gifts(xPosition, yPosition, zPosition);
+      if (ctg >= 0) {gift_positions[ctg][0] = 999; removed_gifts++; console.log("REMOVED GIFT: "+ctg)}
+      
+      //if (num_of_crosses == 2) {gift_positions[0][xx] = 999;}
     }
 
     yaw += yawRate * elapsed;
@@ -537,6 +628,108 @@ function animate() {
 
   }
   lastTime = timeNow;
+}
+
+function check_touched_gifts (current_position_X, current_position_Y, current_position_Z) {
+  //console.log("check_touched_gifts...");
+  
+  for (var i = 0; i < gift_positions.length; i++) {
+    
+    //console.log(current_position_X+", "+current_position_Y+", "+current_position_Z);
+    //console.log(gift_positions[i][0]+", "+gift_positions[i][1]+", "+gift_positions[i][2]);
+    
+    // if (gift_positions[i][0] >= current_position_X && current_position_X <= gift_positions[i][0]+gift_size
+    //     && gift_positions[i][1] >= current_position_Y && current_position_Y <= gift_positions[i][1]+gift_size
+    //     && gift_positions[i][2] >= current_position_Z && current_position_Z <= gift_positions[i][2]+gift_size) {
+    //   console.log("Gift "+i+" crossed.");
+    //   return i;
+      
+    // }
+    // console.log("nova:");
+    // console.log(Math.abs(gift_positions[i][0] + current_position_X));
+    // console.log(Math.abs(gift_positions[i][1] + current_position_Y));
+    // console.log(Math.abs(gift_positions[i][2] + current_position_Z));
+    
+    if (i == 0) {
+      console.log("nova:");
+      console.log(Math.abs(gift_positions[i][0] + current_position_X));
+      console.log(Math.abs(gift_positions[i][1] + current_position_Y));
+      console.log(Math.abs(gift_positions[i][2] + current_position_Z));
+      
+      if (Math.abs(gift_positions[i][0] + current_position_X) <= Math.abs(x1) &&
+          Math.abs(gift_positions[i][1] + current_position_Y) <= gift_size &&
+          Math.abs(gift_positions[i][2] + current_position_Z) <= Math.abs(z1)) {
+        console.log("Gift "+i+" crossed.");
+        return i;
+        
+      }
+      
+    } else if (i == 1) {
+      console.log("nova: "+i);
+      console.log(Math.abs(gift_positions[i][0] + current_position_X));
+      console.log(Math.abs(gift_positions[i][1] + current_position_Y));
+      console.log(Math.abs(gift_positions[i][2] + current_position_Z));
+      
+      if (Math.abs(gift_positions[i][0] + current_position_X) <= Math.abs(x2) &&
+          Math.abs(gift_positions[i][1] + current_position_Y) <= gift_size &&
+          Math.abs(gift_positions[i][2] + current_position_Z) <= Math.abs(z2)) {
+        console.log("Gift "+i+" crossed.");
+        return i;
+        
+      }
+      
+    } else if (i == 2) {
+      console.log("nova: "+i);
+      console.log(Math.abs(gift_positions[i][0] + current_position_X));
+      console.log(Math.abs(gift_positions[i][1] + current_position_Y));
+      console.log(Math.abs(gift_positions[i][2] + current_position_Z));
+      
+      if (Math.abs(gift_positions[i][0] + current_position_X) <= Math.abs(x3) &&
+          Math.abs(gift_positions[i][1] + current_position_Y) <= gift_size &&
+          Math.abs(gift_positions[i][2] + current_position_Z) <= Math.abs(z3)) {
+        console.log("Gift "+i+" crossed.");
+        return i;
+        
+      }
+      
+    } else if (i == 3) {
+      console.log("nova: "+i);
+      console.log(Math.abs(gift_positions[i][0] + current_position_X));
+      console.log(Math.abs(gift_positions[i][1] + current_position_Y));
+      console.log(Math.abs(gift_positions[i][2] + current_position_Z));
+      
+      if (Math.abs(gift_positions[i][0] + current_position_X) <= Math.abs(x4) &&
+          Math.abs(gift_positions[i][1] + current_position_Y) <= gift_size &&
+          Math.abs(gift_positions[i][2] + current_position_Z) <= Math.abs(z4)) {
+        console.log("Gift "+i+" crossed.");
+        return i;
+        
+      }
+      
+    } else if (i == 4) {
+      console.log("nova: "+i);
+      console.log(Math.abs(gift_positions[i][0] + current_position_X));
+      console.log(Math.abs(gift_positions[i][1] + current_position_Y));
+      console.log(Math.abs(gift_positions[i][2] + current_position_Z));
+      
+      if (Math.abs(gift_positions[i][0] + current_position_X) <= Math.abs(x5) &&
+          Math.abs(gift_positions[i][1] + current_position_Y) <= gift_size &&
+          Math.abs(gift_positions[i][2] + current_position_Z) <= Math.abs(z5)) {
+        console.log("Gift "+i+" crossed.");
+        return i;
+        
+      }
+      
+    }
+    
+  }
+  
+  return -1;
+  
+}
+
+function reset_gift_positions () {
+  for (var i = 0; i < gift_positions.length; i++) {gift_positions[i][0] = 0;}
 }
 
 //
