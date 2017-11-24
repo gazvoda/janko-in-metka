@@ -19,7 +19,7 @@ var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
 // Variables for storing textures
-var wallTexture;
+var floorTexture;
 // Variables for storing textures
 var cubeTexture;
 
@@ -237,12 +237,12 @@ function setMatrixUniforms() {
 // the job; it gets called each time a texture finishes loading.
 //
 function initTextures() {
-  wallTexture = gl.createTexture();
-  wallTexture.image = new Image();
-  wallTexture.image.onload = function () {
-    handleTextureLoaded(wallTexture)
+  floorTexture = gl.createTexture();
+  floorTexture.image = new Image();
+  floorTexture.image.onload = function () {
+    handleTextureLoaded(floorTexture)
   }
-  wallTexture.image.src = "./assets/grass2.jpg";
+  floorTexture.image.src = "./assets/grass1.jpg";
 
   cubeTexture = gl.createTexture();
   cubeTexture.image = new Image();
@@ -461,6 +461,7 @@ function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
   // Clear the canvas before we start drawing on it.
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.clearColor(0.2, 0.3, 1, 0.3);
 
   // If buffers are empty we stop loading the application.
   if (worldVertexTextureCoordBuffer == null || worldVertexPositionBuffer == null) {
@@ -575,7 +576,7 @@ function drawScene() {
 
   // Activate textures
   gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, wallTexture);
+  gl.bindTexture(gl.TEXTURE_2D, floorTexture);
   gl.uniform1i(shaderProgram.samplerUniform, 0);
 
   // Set the texture coordinates attribute for the vertices.
