@@ -733,6 +733,38 @@ function reset_gift_positions () {
   for (var i = 0; i < gift_positions.length; i++) {gift_positions[i][0] = 0;}
 }
 
+// COUNTDOWN
+function countdown() {
+    var seconds = 60;
+    function tick() {
+        var counter = document.getElementById("counter");
+        
+        var not_in_game = $('.modal').is(':hidden');
+        if (not_in_game) {seconds--;}
+        
+        counter.innerHTML = "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+        
+        if( seconds > 0 ) {setTimeout(tick, 1000);}
+        else {
+          alert("Čas je potekel, igre je konec.");
+          
+          if (confirm("Želite ponoviti igro na čas?")) {
+              location.reload();
+              
+          } else { //NE DELA SE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            pitch = 0;
+            pitchRate = 0;
+            yaw = 0;
+            yawRate = 0;
+            speed = 0;
+            
+          }
+      
+        }
+    }
+    tick();
+}
+
 //
 // Keyboard handling helper functions
 //
@@ -838,6 +870,8 @@ function start() {
     // Bind keyboard handling functions to document handlers
     document.onkeydown = handleKeyDown;
     document.onkeyup = handleKeyUp;
+    
+    countdown();
 
     // Set up to draw the scene periodically.
     setInterval(function() {
